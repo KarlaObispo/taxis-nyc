@@ -4,7 +4,6 @@ st.set_page_config(page_title="Taxis NYC", layout="wide")
 
 
 def url_por_defecto():
-    # En Streamlit Cloud sale de Secrets (API_URL); en local, de localhost
     try:
         return st.secrets["API_URL"]
     except Exception:
@@ -18,6 +17,8 @@ pagina = st.navigation({
     "Planificar": [
         st.Page("paginas/pronostico.py", title="Pronóstico",
                 icon=":material/query_stats:", default=True),
+        st.Page("paginas/decision.py", title="Decisión",
+                icon=":material/local_taxi:"),
     ],
     "Entender": [
         st.Page("paginas/segmentacion.py", title="Segmentación de zonas",
