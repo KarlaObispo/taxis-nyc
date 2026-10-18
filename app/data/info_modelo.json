@@ -1,0 +1,486 @@
+{
+  "variables": [
+    "viajes_dia",
+    "distancia_mediana",
+    "tarifa_mediana",
+    "propina_mediana",
+    "duracion_mediana",
+    "pct_finde",
+    "pct_6_10",
+    "pct_16_20",
+    "pct_22_5",
+    "pct_peaje",
+    "pct_congestion"
+  ],
+  "k": 4,
+  "grupos": {
+    "0": {
+      "nombre": "Periferia de baja demanda",
+      "descripcion": "Pocos viajes por día y propinas bajas; además viajes largos, sobre todo en la mañana."
+    },
+    "1": {
+      "nombre": "Manhattan Central",
+      "descripcion": "Alto volumen de viajes cortos, núcleo congestionado y con propinas superior al promedio."
+    },
+    "2": {
+      "nombre": "Largas distancias y Aeropuertos",
+      "descripcion": "Viajes largos con tarifa y propina altas como Aeropuertos."
+    },
+    "3": {
+      "nombre": "Barrios de Bares",
+      "descripcion": "Uso frecuente nocturno y de fin de semana."
+    }
+  },
+  "zonas": {
+    "4": {
+      "nombre": "Alphabet City",
+      "grupo": 3,
+      "nombre_grupo": "Barrios de Bares"
+    },
+    "7": {
+      "nombre": "Astoria",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "10": {
+      "nombre": "Baisley Park",
+      "grupo": 2,
+      "nombre_grupo": "Largas distancias y Aeropuertos"
+    },
+    "12": {
+      "nombre": "Battery Park",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "13": {
+      "nombre": "Battery Park City",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "24": {
+      "nombre": "Bloomingdale",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "25": {
+      "nombre": "Boerum Hill",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "33": {
+      "nombre": "Brooklyn Heights",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "39": {
+      "nombre": "Canarsie",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "41": {
+      "nombre": "Central Harlem",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "42": {
+      "nombre": "Central Harlem North",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "43": {
+      "nombre": "Central Park",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "45": {
+      "nombre": "Chinatown",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "48": {
+      "nombre": "Clinton East",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "50": {
+      "nombre": "Clinton West",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "61": {
+      "nombre": "Crown Heights North",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "65": {
+      "nombre": "Downtown Brooklyn/MetroTech",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "66": {
+      "nombre": "DUMBO/Vinegar Hill",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "68": {
+      "nombre": "East Chelsea",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "70": {
+      "nombre": "East Elmhurst",
+      "grupo": 2,
+      "nombre_grupo": "Largas distancias y Aeropuertos"
+    },
+    "74": {
+      "nombre": "East Harlem North",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "75": {
+      "nombre": "East Harlem South",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "76": {
+      "nombre": "East New York",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "79": {
+      "nombre": "East Village",
+      "grupo": 3,
+      "nombre_grupo": "Barrios de Bares"
+    },
+    "80": {
+      "nombre": "East Williamsburg",
+      "grupo": 3,
+      "nombre_grupo": "Barrios de Bares"
+    },
+    "87": {
+      "nombre": "Financial District North",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "88": {
+      "nombre": "Financial District South",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "89": {
+      "nombre": "Flatbush/Ditmas Park",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "90": {
+      "nombre": "Flatiron",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "97": {
+      "nombre": "Fort Greene",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "100": {
+      "nombre": "Garment District",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "107": {
+      "nombre": "Gramercy",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "112": {
+      "nombre": "Greenpoint",
+      "grupo": 3,
+      "nombre_grupo": "Barrios de Bares"
+    },
+    "113": {
+      "nombre": "Greenwich Village North",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "114": {
+      "nombre": "Greenwich Village South",
+      "grupo": 3,
+      "nombre_grupo": "Barrios de Bares"
+    },
+    "116": {
+      "nombre": "Hamilton Heights",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "125": {
+      "nombre": "Hudson Sq",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "129": {
+      "nombre": "Jackson Heights",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "130": {
+      "nombre": "Jamaica",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "132": {
+      "nombre": "JFK Airport",
+      "grupo": 2,
+      "nombre_grupo": "Largas distancias y Aeropuertos"
+    },
+    "137": {
+      "nombre": "Kips Bay",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "138": {
+      "nombre": "LaGuardia Airport",
+      "grupo": 2,
+      "nombre_grupo": "Largas distancias y Aeropuertos"
+    },
+    "140": {
+      "nombre": "Lenox Hill East",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "141": {
+      "nombre": "Lenox Hill West",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "142": {
+      "nombre": "Lincoln Square East",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "143": {
+      "nombre": "Lincoln Square West",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "144": {
+      "nombre": "Little Italy/NoLiTa",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "145": {
+      "nombre": "Long Island City/Hunters Point",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "146": {
+      "nombre": "Long Island City/Queens Plaza",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "148": {
+      "nombre": "Lower East Side",
+      "grupo": 3,
+      "nombre_grupo": "Barrios de Bares"
+    },
+    "151": {
+      "nombre": "Manhattan Valley",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "152": {
+      "nombre": "Manhattanville",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "158": {
+      "nombre": "Meatpacking/West Village West",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "161": {
+      "nombre": "Midtown Center",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "162": {
+      "nombre": "Midtown East",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "163": {
+      "nombre": "Midtown North",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "164": {
+      "nombre": "Midtown South",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "166": {
+      "nombre": "Morningside Heights",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "170": {
+      "nombre": "Murray Hill",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "179": {
+      "nombre": "Old Astoria",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "181": {
+      "nombre": "Park Slope",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "186": {
+      "nombre": "Penn Station/Madison Sq West",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "188": {
+      "nombre": "Prospect-Lefferts Gardens",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "193": {
+      "nombre": "Queensbridge/Ravenswood",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "209": {
+      "nombre": "Seaport",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "211": {
+      "nombre": "SoHo",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "215": {
+      "nombre": "South Jamaica",
+      "grupo": 2,
+      "nombre_grupo": "Largas distancias y Aeropuertos"
+    },
+    "216": {
+      "nombre": "South Ozone Park",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "223": {
+      "nombre": "Steinway",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "224": {
+      "nombre": "Stuy Town/Peter Cooper Village",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "226": {
+      "nombre": "Sunnyside",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "229": {
+      "nombre": "Sutton Place/Turtle Bay North",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "230": {
+      "nombre": "Times Sq/Theatre District",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "231": {
+      "nombre": "TriBeCa/Civic Center",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "232": {
+      "nombre": "Two Bridges/Seward Park",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "233": {
+      "nombre": "UN/Turtle Bay South",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "234": {
+      "nombre": "Union Sq",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "236": {
+      "nombre": "Upper East Side North",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "237": {
+      "nombre": "Upper East Side South",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "238": {
+      "nombre": "Upper West Side North",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "239": {
+      "nombre": "Upper West Side South",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "244": {
+      "nombre": "Washington Heights South",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "246": {
+      "nombre": "West Chelsea/Hudson Yards",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "249": {
+      "nombre": "West Village",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "255": {
+      "nombre": "Williamsburg (North Side)",
+      "grupo": 3,
+      "nombre_grupo": "Barrios de Bares"
+    },
+    "256": {
+      "nombre": "Williamsburg (South Side)",
+      "grupo": 3,
+      "nombre_grupo": "Barrios de Bares"
+    },
+    "260": {
+      "nombre": "Woodside",
+      "grupo": 0,
+      "nombre_grupo": "Periferia de baja demanda"
+    },
+    "261": {
+      "nombre": "World Trade Center",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "262": {
+      "nombre": "Yorkville East",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    },
+    "263": {
+      "nombre": "Yorkville West",
+      "grupo": 1,
+      "nombre_grupo": "Manhattan Central"
+    }
+  }
+}
