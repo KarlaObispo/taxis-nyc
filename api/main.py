@@ -21,7 +21,7 @@ demanda["dia"] = demanda["timestamp"].dt.date
 demanda["nombre"] = demanda["nombre"].fillna("Zona " + demanda["PULocationID"].astype(str))
 demanda["distrito"] = demanda["distrito"].fillna("Sin distrito")
 # Mismas categorías (y mismo orden) que en el entrenamiento
-DTIPO_ZONA = "int64"   # debe coincidir con el dtype que imprimió Colab
+DTIPO_ZONA = "int64"   
 
 ids = sorted(int(z) for z in demanda["PULocationID"].unique())
 demanda["zona"] = pd.Categorical(
