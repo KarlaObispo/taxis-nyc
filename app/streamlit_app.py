@@ -7,8 +7,7 @@ def url_por_defecto():
     try:
         return st.secrets["API_URL"]
     except Exception:
-        return "http://localhost:8000"
-
+        return "https://taxis-nyc.onrender.com"
 
 if "api_url" not in st.session_state:
     st.session_state["api_url"] = url_por_defecto()

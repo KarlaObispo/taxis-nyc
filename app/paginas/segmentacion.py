@@ -24,7 +24,7 @@ zonas, perfil, silueta = cargar()
 st.title("Segmentación de zonas")
 st.caption("K-Means agrupa las zonas por cómo se usan los taxis. PCA las resume en dos ejes para poder dibujarlas.")
 
-# --- Filtro de grupos ---
+# Filtro de grupos 
 nombres = zonas.groupby("grupo")["nombre_grupo"].first().to_dict()
 seleccion = st.pills("Grupos", list(nombres.values()), selection_mode="multi", default=list(nombres.values()))
 ids = [g for g, n in nombres.items() if n in seleccion]
@@ -33,7 +33,7 @@ if not ids:
     st.stop()
 filtradas = zonas[zonas["grupo"].isin(ids)]
 
-# --- Tarjetas por grupo ---
+#
 cols = st.columns(len(nombres))
 for col, (g, nombre) in zip(cols, nombres.items()):
     d = zonas[zonas["grupo"] == g]
@@ -45,7 +45,7 @@ for col, (g, nombre) in zip(cols, nombres.items()):
             f"{d['distancia_mediana'].median():.1f} millas · {d['pct_noche'].mean():.0%} de noche"
         )
 
-# --- Dispersión PCA + perfil horario ---
+#  Dispersión PCA + perfil horario 
 izq, der = st.columns([1.2, 1])
 puntos = filtradas.reset_index()
 fig = px.scatter(
@@ -65,7 +65,7 @@ df_h.index.name = "Hora del día"
 der.markdown("**Perfil horario de las zonas**")
 der.line_chart(df_h)
 
-# --- Tabla de detalle ---
+# Tabla de detalle
 st.subheader("Detalle por zona")
 tabla = filtradas.sort_values("viajes_dia", ascending=False).head(10).copy()
 tabla["pct_noche"] = tabla["pct_noche"] * 100
@@ -85,10 +85,10 @@ st.dataframe(
         "perfil_24h": st.column_config.LineChartColumn("Perfil de 0 a 23 h"),
     },
     hide_index=True,
-    use_container_width=True,
+    width="stretch",
 )
 
-# --- Justificar k ---
+# Justificar k 
 with st.expander(f"¿Por qué {len(nombres)} grupos?"):
     sil = pd.Series(silueta)
     sil.index = sil.index.astype(int)

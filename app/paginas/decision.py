@@ -18,7 +18,7 @@ def obtener_api_url():
     try:
         return st.secrets["API_URL"].rstrip("/")
     except Exception:
-        return "http://localhost:8000"
+        return  "https://taxis-nyc.onrender.com"
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -190,9 +190,12 @@ st.caption("El pronóstico no es la decisión. La cantidad correcta depende de q
 
 url = obtener_api_url()
 try:
-    with st.spinner("Conectando con la API (la primera vez puede tardar hasta un minuto)..."):
+    with st.status("Conectando con la API (la primera vez puede tardar hasta un minuto)...") as estado:
         info = leer_info(url)
+        estado.update(label="API conectada", state="complete")
+    st.sidebar.badge("API en línea", color="green")
 except requests.RequestException:
+    st.sidebar.badge("API sin conexión", color="red")
     st.error("No pude conectarme a la API. Revisa la URL en «Configurar API» de la barra lateral "
              "o espera unos segundos si el servicio estaba dormido.")
     st.stop()

@@ -18,8 +18,7 @@ def obtener_api_url():
     try:
         return st.secrets["API_URL"].rstrip("/")
     except Exception:
-        return "http://localhost:8000"
-
+        return "https://taxis-nyc.onrender.com"
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def leer_info(url):
@@ -51,7 +50,15 @@ def etiqueta_fecha(f, ultima):
     texto = f"{DIAS[d.dayofweek]} {d.day}"
     return f"{texto} (mañana)" if f == ultima else texto
 
-
+@st.dialog("Cómo leer el gráfico")
+def ayuda():
+    st.markdown(
+        "- **Línea verde:** la mediana (p50), el valor más probable.\n"
+        "- **Banda:** del cuantil 10% al 90%. Se espera que ~8 de cada 10 horas caigan dentro.\n"
+        "- **Puntos rojos:** viajes reales, cuando existen.\n"
+        "- **Línea punteada:** lo que pasó a la misma hora hace una semana.\n"
+        "- El 1 de febrero no tiene datos reales: es un pronóstico puro."
+    )
 # Encabezado
 col_t, col_b = st.columns([5, 1])
 with col_t:
@@ -59,36 +66,49 @@ with col_t:
     st.caption("Viajes por hora que se esperan en una zona, con su rango de incertidumbre. "
                "El modelo vive en la API.")
 with col_b:
-    with st.popover("Cómo leerlo"):
-        st.markdown(
-            "- **Línea verde:** la mediana (p50), el valor más probable.\n"
-            "- **Banda:** del cuantil 10% al 90%. Se espera que ~8 de cada 10 horas caigan dentro.\n"
-            "- **Puntos rojos:** viajes reales, cuando existen.\n"
-            "- **Línea punteada:** lo que pasó a la misma hora hace una semana.\n"
-            "- El 1 de febrero no tiene datos reales: es un pronóstico puro."
-        )
+    if st.button("Cómo leerlo", icon=":material/help:"):
+        ayuda()
 
-# ---------- Conexión ----------
+#  Conexión 
 url = obtener_api_url()
 try:
-    with st.spinner("Conectando con la API (la primera vez puede tardar hasta un minuto)..."):
+    with st.status("Conectando con la API (la primera vez puede tardar hasta un minuto)...") as estado:
         info = leer_info(url)
+        estado.update(label="API conectada", state="complete")
+    st.sidebar.badge("API en línea", color="green")
 except requests.RequestException:
+    st.sidebar.badge("API sin conexión", color="red")
     st.error("No pude conectarme a la API. Revisa la URL en «Configurar API» de la barra lateral "
              "o espera unos segundos si el servicio estaba dormido.")
     st.stop()
-st.caption("✅ API conectada")
 
-# ---------- Controles ----------
+# Controles
 zonas = sorted(info["zonas"], key=lambda z: z["nombre"])
 etiquetas = {z["id"]: f'{z["nombre"]} ({z["distrito"]})' for z in zonas}
 ids = list(etiquetas)
-zona_id = st.selectbox("Zona", ids, format_func=etiquetas.get,
-                       index=ids.index(ZONA_POR_DEFECTO) if ZONA_POR_DEFECTO in ids else 0)
+
+# Si el link trae ?zona=...&fecha=..., se usan como valores iniciales
+try:
+    zona_inicial = int(st.query_params.get("zona", ZONA_POR_DEFECTO))
+except ValueError:
+    zona_inicial = ZONA_POR_DEFECTO
+if zona_inicial not in ids:
+    zona_inicial = ZONA_POR_DEFECTO if ZONA_POR_DEFECTO in ids else ids[0]
 
 fechas = info["fechas"]
 ultima = fechas[-1]
-fecha = st.radio("Fecha", fechas, format_func=lambda f: etiqueta_fecha(f, ultima), horizontal=True)
+fecha_inicial = st.query_params.get("fecha", fechas[0])
+if fecha_inicial not in fechas:
+    fecha_inicial = fechas[0]
+
+zona_id = st.selectbox("Zona", ids, format_func=etiquetas.get,
+                       index=ids.index(zona_inicial))
+fecha = st.radio("Fecha", fechas, format_func=lambda f: etiqueta_fecha(f, ultima),
+                 index=fechas.index(fecha_inicial), horizontal=True)
+
+# Guardar la elección en el link
+st.query_params["zona"] = zona_id
+st.query_params["fecha"] = fecha
 
 try:
     resp = leer_pronostico(url, zona_id, fecha)
@@ -102,7 +122,7 @@ except requests.HTTPError as e:
 df = a_tabla(resp)
 con_real = df["real"].notna()
 
-# ---------- Tarjetas ----------
+#  Tarjetas 
 total = df["p50"].sum()
 semana = df["hace_una_semana"].sum()
 delta = (total / semana - 1) * 100 if semana > 0 else None
@@ -158,7 +178,19 @@ tabla = df.rename(columns={
 })
 
 with st.expander("Ver tabla por hora", expanded=True):
-    st.dataframe(tabla.round(1), hide_index=True, use_container_width=True)
+    st.dataframe(
+        tabla.round(1),
+        hide_index=True,
+        width="stretch",
+        column_config={
+            "Hora": st.column_config.NumberColumn("Hora", format="%d:00"),
+            "Real": st.column_config.NumberColumn("Real", format="%.0f"),
+            "Mediana (p50)": st.column_config.ProgressColumn(
+                "Mediana (p50)", format="%.1f",
+                min_value=0, max_value=float(tabla["p90"].max()),
+            ),
+        },
+    )
     st.download_button("Descargar CSV", tabla.to_csv(index=False).encode("utf-8"),
                        file_name=f"pronostico_{zona_id}_{fecha}.csv", mime="text/csv",
                        key="descargar_csv_pronostico")
