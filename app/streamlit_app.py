@@ -22,6 +22,8 @@ pagina = st.navigation({
     "Entender": [
         st.Page("paginas/segmentacion.py", title="Segmentación de zonas",
                 icon=":material/bubble_chart:"),
+        st.Page("paginas/ficha_modelo.py", title="Ficha del modelo",
+                icon=":material/fact_check:"),
     ],
 })
 
