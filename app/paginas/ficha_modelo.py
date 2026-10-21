@@ -149,8 +149,8 @@ chico = grupos.loc[grupos["zonas"].idxmin()]
 with st.container(border=True):
     st.subheader(":material/warning: Limitaciones")
     st.markdown(
-        f"- **Pocos datos de entrenamiento:** solo {dias_entrena} días de enero de 2024. "
-        f"No conoce el verano, las vacaciones ni eventos especiales.\n"
+        f"- **Pocos datos de entrenamiento:** solo Pocos días de enero de 2024. "
+        f"No conoce data histórica de otros años en el mismo período.\n"
         f"- **Solo usa la historia de la propia demanda y el calendario** (retrasos de 1, 2 y 7 días, "
         f"hora, día de la semana y feriados): **no sabe de clima, conciertos ni cierres de calles**.\n"
         f"- **Cobertura variable:** el rango 10%–90% acierta {ficha['cobertura_80']:.1%} en general, "
