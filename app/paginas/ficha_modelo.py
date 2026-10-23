@@ -151,6 +151,8 @@ with st.container(border=True):
     st.markdown(
         f"- **Pocos datos de entrenamiento:** solo Pocos días de enero de 2024. "
         f"No conoce data histórica de otros años en el mismo período.\n"
+        f"- **No conoce variables del mercado:**. "
+        f"No se entrena con variables de precios de mercado, costos de gasolina, competencia, tráfico, tiempo promedio de viaje, etc.\n"
         f"- **Solo usa la historia de la propia demanda y el calendario** (retrasos de 1, 2 y 7 días, "
         f"hora, día de la semana y feriados): **no sabe de clima, conciertos ni cierres de calles**.\n"
         f"- **Cobertura variable:** el rango 10%–90% acierta {ficha['cobertura_80']:.1%} en general, "
@@ -172,6 +174,8 @@ with st.container(border=True):
         f"donde el error relativo es mayor): los datos son solo de taxis amarillos; "
         "poca demanda de taxi amarillo no significa poca necesidad de transporte.\n"
         "- **Usarlo más de un día hacia adelante:** está entrenado para pronosticar el día siguiente.\n"
+        "- **Puede perjudicar las variables del mercado:** aumentar el precio cuando la demanda sea más alta de lo pronosticado."
+        "Asimismo, puede generar pérdida para los transportistas cuando la demanda sea menor.\n"
         "- **Tratar el pronóstico como una cifra exacta:** es una estimación con un rango; "
         "úsalo para planificar, no para garantizar cuántos viajes habrá."
     )

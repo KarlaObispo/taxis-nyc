@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 import seaborn as sns
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 import streamlit as st
 
 DIAS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
@@ -87,7 +88,7 @@ zonas = sorted(info["zonas"], key=lambda z: z["nombre"])
 etiquetas = {z["id"]: f'{z["nombre"]} ({z["distrito"]})' for z in zonas}
 ids = list(etiquetas)
 
-# Si el link trae ?zona=...&fecha=..., se usan como valores iniciales
+# Si el link trae zona=... y fecha=..., se usan como valores iniciales
 try:
     zona_inicial = int(st.query_params.get("zona", ZONA_POR_DEFECTO))
 except ValueError:
@@ -153,22 +154,60 @@ with c4.container(border=True):
         st.caption("Aún no hay viajes reales para esta fecha")
 
 # Gráfico 
-sns.set_theme(style="whitegrid")
-fig, ax = plt.subplots(figsize=(11, 4.5))
-ax.fill_between(df["hora"], df["p10"], df["p90"], color=VERDE, alpha=0.18, label="Rango 10%–90%")
-sns.lineplot(data=df, x="hora", y="hace_una_semana", ax=ax, color=GRIS,
-             linestyle=":", label="Hace una semana")
-sns.lineplot(data=df, x="hora", y="p50", ax=ax, color=VERDE, linewidth=2.5,
-             label="Pronóstico (mediana)")
+# Gráfico interactivo
+def color_rgba(hex_color, alpha):
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    return f"rgba({r},{g},{b},{alpha})"
+
+fig = go.Figure()
+
+# Banda 10%-90%
+fig.add_trace(go.Scatter(
+    x=df["hora"], y=df["p90"], mode="lines", line=dict(width=0),
+    showlegend=False, hovertemplate="p90: %{y:.0f}<extra></extra>",
+))
+fig.add_trace(go.Scatter(
+    x=df["hora"], y=df["p10"], mode="lines", line=dict(width=0),
+    fill="tonexty", fillcolor=color_rgba(VERDE, 0.18), name="Rango 10%–90%",
+    hovertemplate="p10: %{y:.0f}<extra></extra>",
+))
+
+# Hace una semana
+fig.add_trace(go.Scatter(
+    x=df["hora"], y=df["hace_una_semana"], mode="lines",
+    line=dict(color=GRIS, dash="dot", width=2), name="Hace una semana",
+    hovertemplate="Hace una semana: %{y:.0f}<extra></extra>",
+))
+
+# Pronóstico (mediana)
+fig.add_trace(go.Scatter(
+    x=df["hora"], y=df["p50"], mode="lines",
+    line=dict(color=VERDE, width=3), name="Pronóstico (mediana)",
+    hovertemplate="Pronóstico: %{y:.0f}<extra></extra>",
+))
+
+# Real (los NaN simplemente no se dibujan)
 if con_real.any():
-    sns.scatterplot(data=df[con_real], x="hora", y="real", ax=ax, color=ROJO, s=45,
-                    label="Real", zorder=3)
-ax.set(xlabel="Hora del día", ylabel="Viajes", xlim=(0, 23),
-       title=f'{resp["zona"]["nombre"]} · {etiqueta_fecha(fecha, ultima)}')
-ax.set_xticks(range(0, 24, 2))
-ax.legend(loc="upper left", frameon=False, ncol=4)
-st.pyplot(fig)
-plt.close(fig)
+    fig.add_trace(go.Scatter(
+        x=df.loc[con_real, "hora"], y=df.loc[con_real, "real"], mode="markers",
+        marker=dict(color=ROJO, size=9, line=dict(color="white", width=1)),
+        name="Real", hovertemplate="Real: %{y:.0f}<extra></extra>",
+    ))
+
+fig.update_layout(
+    title=f'{resp["zona"]["nombre"]} · {etiqueta_fecha(fecha, ultima)}',
+    xaxis_title="Hora del día",
+    yaxis_title="Viajes",
+    hovermode="x unified",
+    template="simple_white",
+    legend=dict(orientation="h", y=1.12, x=0),
+    margin=dict(t=90),
+)
+fig.update_xaxes(range=[0, 23], dtick=2, showgrid=True, gridcolor="#e5e5e5")
+fig.update_yaxes(showgrid=True, gridcolor="#e5e5e5")
+
+st.plotly_chart(fig, use_container_width=True)
 
 ## Tabla y descarga
 tabla = df.rename(columns={
