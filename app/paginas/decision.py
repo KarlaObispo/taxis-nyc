@@ -4,6 +4,7 @@ import requests
 import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
+import plotly.graph_objects as go
 
 DIAS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
 VERDE, NARANJA, ROJO = "#2f6f62", "#d9822b", "#b03a2e"
@@ -107,24 +108,73 @@ def panel(df, columnas_q, niveles, titulo, zona_id, fecha):
     tiene_real = df["real"].notna().all()
 
     # Gráfico (seaborn) 
-    graf = pd.DataFrame({"hora": df["hora"], "taxis": enviados, "central": central, "real": df["real"]})
-    sns.set_theme(style="whitegrid")
-    fig, ax = plt.subplots(figsize=(11, 4.2))
-    sns.barplot(data=graf, x="hora", y="taxis", color=VERDE, ax=ax,
-                label=f"Taxis recomendados ({etiqueta_q})")
-    sns.lineplot(data=graf, x="hora", y="central", ax=ax, color=NARANJA, linewidth=2.2,
-                 label="Pronóstico central (p50)")
-    if tiene_real:
-        sns.scatterplot(data=graf, x="hora", y="real", ax=ax, color=ROJO, s=40,
-                        label="Demanda real", zorder=3)
-    ax.set_xticks(range(0, 24, 2))
-    ax.set_xticklabels(range(0, 24, 2))
-    ax.set(xlabel="Hora", ylabel="Taxis / viajes", title=titulo)
-    ax.legend(loc="upper left", frameon=False, ncol=3)
-    st.pyplot(fig)
-    plt.close(fig)
 
-    # ----- Costo de cada regla 
+    def grafico_pronostico(df, enviados, central, etiqueta_q, titulo, tiene_real):
+        """Gráfico dinámico de taxis recomendados vs pronóstico central y demanda real."""
+
+        graf = pd.DataFrame({
+            "hora": df["hora"].to_numpy(),
+            "taxis": pd.Series(enviados).to_numpy(),
+            "central": pd.Series(central).to_numpy(),
+            "real": df["real"].to_numpy() if tiene_real else None,
+        })
+
+        # --- Controles ---
+        c1, c2 = st.columns([2, 1])
+        with c1:
+            h_ini, h_fin = st.slider("Rango de horas", 0, 23, (0, 23), key="rango_horas")
+        with c2:
+            ver_central = st.checkbox("Pronóstico central (p50)", value=True, key="ver_central")
+            ver_real = st.checkbox("Demanda real", value=True, key="ver_real",
+                                disabled=not tiene_real)
+
+        graf = graf[(graf["hora"] >= h_ini) & (graf["hora"] <= h_fin)]
+
+        # --- Gráfico ---
+        fig = go.Figure()
+
+        fig.add_bar(
+            x=graf["hora"], y=graf["taxis"], marker_color=VERDE,
+            name=f"Taxis recomendados ({etiqueta_q})",
+            hovertemplate="%{y:.0f}",
+        )
+
+        if ver_central:
+            fig.add_scatter(
+                x=graf["hora"], y=graf["central"], mode="lines",
+                line=dict(color=NARANJA, width=2.5),
+                name="Pronóstico central (p50)",
+                hovertemplate="%{y:.1f}",
+            )
+
+        if tiene_real and ver_real:
+            fig.add_scatter(
+                x=graf["hora"], y=graf["real"], mode="markers",
+                marker=dict(color=ROJO, size=8),
+                name="Demanda real",
+                hovertemplate="%{y:.0f}",
+            )
+
+        fig.update_layout(
+            title=dict(text=titulo, x=0, y=0.98, xanchor="left", yanchor="top"),
+            xaxis_title="Hora",
+            yaxis_title="Taxis / viajes",
+            hovermode="x unified",
+            legend=dict(orientation="h", x=0, y=1.02, xanchor="left", yanchor="bottom"),
+            xaxis=dict(
+                dtick=1 if (h_fin - h_ini) <= 12 else 2,
+                range=[h_ini - 0.6, h_fin + 0.6],
+            ),
+            template="simple_white",
+            height=420,
+            margin=dict(l=10, r=10, t=100, b=10),
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+
+    grafico_pronostico(df, enviados, central, etiqueta_q, titulo, tiene_real)
+    # Costo de cada regla 
     if tiene_real:
         real = df["real"].to_numpy()
         costo_rec = costo_por_hora(enviados, real, costo_ocioso, costo_perdido).sum()
